@@ -81,6 +81,12 @@ textarea{resize:vertical;min-height:76px}
 .login h1{font-size:28px;letter-spacing:-.04em;margin:0 0 6px}
 .login ol{padding-left:20px;color:var(--muted);font-size:13px}
 .login ol li{margin-bottom:4px}
+.login form{display:flex;flex-direction:column;gap:10px}
+.login details{margin-top:22px;border-top:1px dashed var(--line);padding-top:14px}
+.login summary{cursor:pointer;font-size:13px;font-weight:700;color:var(--muted)}
+.creds{max-width:440px;margin:60px auto}
+.creds h2{margin:0 0 6px;font-size:22px;letter-spacing:-.03em}
+.creds form{display:flex;flex-direction:column;gap:10px}
 .msg{margin-top:12px;font-size:13px}
 .msg.err{color:var(--danger)}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--navy);color:#fff;padding:12px 20px;border-radius:100px;font-size:14px;font-weight:600;box-shadow:0 10px 30px #0004;z-index:10}
@@ -101,6 +107,7 @@ textarea{resize:vertical;min-height:76px}
   <span class="spacer"></span>
   <a href="../" target="_blank" rel="noopener">Сайтыг харах ↗</a>
   <button class="btn primary" id="save" hidden disabled>Хадгалах</button>
+  <button class="btn ghost sm" id="creds-btn" hidden style="color:#fff;border-color:#ffffff44">Нэвтрэх нэр/нууц үг</button>
   <button class="btn ghost sm" id="logout" hidden style="color:#fff;border-color:#ffffff44">Гарах</button>
 </header>
 
@@ -108,15 +115,35 @@ textarea{resize:vertical;min-height:76px}
   <section class="login card" id="login" hidden>
     <h1>Admin нэвтрэх</h1>
     <p class="hint">Өөрчлөлт GitHub дээрх сайтын файлд шууд хадгалагдаж, 1–2 минутын дараа сайт шинэчлэгдэнэ.</p>
-    <ol>
-      <li>GitHub → Settings → Developer settings → <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Fine-grained tokens</a> руу орно.</li>
-      <li><b>Repository access</b>: зөвхөн <b>Chameleon</b> repo-г сонгоно.</li>
-      <li><b>Permissions → Contents</b>: <b>Read and write</b> болгоно.</li>
-      <li>Үүссэн token-оо доор хуулна. Token зөвхөн энэ төхөөрөмжийн browser-т хадгалагдана.</li>
-    </ol>
-    <label class="f">GitHub token<input type="password" id="token" autocomplete="off" placeholder="github_pat_…"></label>
-    <div style="margin-top:12px;display:flex;gap:8px"><button class="btn teal" id="login-btn">Нэвтрэх</button></div>
+    <form id="pw-form">
+      <label class="f">Нэвтрэх нэр<input type="text" id="username" autocomplete="username" autocapitalize="off" spellcheck="false"></label>
+      <label class="f">Нууц үг<input type="password" id="password" autocomplete="current-password"></label>
+      <div style="margin-top:4px"><button class="btn teal" id="pw-btn" type="submit">Нэвтрэх</button></div>
+    </form>
     <div class="msg" id="login-msg"></div>
+    <details id="token-login">
+      <summary>GitHub token-оор нэвтрэх (эхний тохиргоо)</summary>
+      <ol>
+        <li>GitHub → Settings → Developer settings → <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Fine-grained tokens</a> руу орно.</li>
+        <li><b>Repository access</b>: зөвхөн <b>Chameleon</b> repo-г сонгоно.</li>
+        <li><b>Permissions → Contents</b>: <b>Read and write</b> болгоно.</li>
+        <li>Үүссэн token-оо доор хуулж нэвтэрнэ. Дараа нь дээд талын <b>“Нэвтрэх нэр/нууц үг”</b> товчоор нэвтрэх нэр, нууц үгээ тохируулна.</li>
+      </ol>
+      <label class="f">GitHub token<input type="password" id="token" autocomplete="off" placeholder="github_pat_…"></label>
+      <div style="margin-top:12px;display:flex;gap:8px"><button class="btn ghost" id="login-btn">Token-оор нэвтрэх</button></div>
+    </details>
+  </section>
+
+  <section class="creds card" id="creds" hidden>
+    <h2>Нэвтрэх нэр, нууц үг тохируулах</h2>
+    <p class="hint">Таны GitHub token энэ нууц үгээр шифрлэгдэж <code>admin/auth.json</code> файлд хадгалагдана. Хуучин нэр/нууц үг ажиллахаа болино.</p>
+    <form id="creds-form">
+      <label class="f">Нэвтрэх нэр<input type="text" id="new-user" autocomplete="username" autocapitalize="off" spellcheck="false" required></label>
+      <label class="f">Шинэ нууц үг (12+ тэмдэгт)<input type="password" id="new-pass" autocomplete="new-password" minlength="12" required></label>
+      <label class="f">Нууц үгээ давтах<input type="password" id="new-pass2" autocomplete="new-password" required></label>
+      <div style="display:flex;gap:8px;margin-top:4px"><button class="btn teal" type="submit" id="creds-save">Хадгалах</button><button class="btn ghost" type="button" id="creds-cancel">Болих</button></div>
+    </form>
+    <div class="msg" id="creds-msg"></div>
   </section>
 
   <section id="app" hidden>
@@ -337,17 +364,74 @@ $('#save').addEventListener('click',save);
 addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='s'&&data){e.preventDefault();if(dirty)save();}});
 
 // ---------- Нэвтрэх ----------
-function showLogin(msg){$('#login').hidden=false;$('#app').hidden=true;$('#save').hidden=true;$('#logout').hidden=true;$('#status').textContent='';const m=$('#login-msg');m.textContent=msg||'';m.className='msg'+(msg?' err':'');}
+function showLogin(msg){$('#login').hidden=false;$('#app').hidden=true;$('#creds').hidden=true;$('#save').hidden=true;$('#logout').hidden=true;$('#creds-btn').hidden=true;$('#status').textContent='';const m=$('#login-msg');m.textContent=msg||'';m.className='msg'+(msg?' err':'');}
+function showApp(){$('#login').hidden=true;$('#creds').hidden=true;$('#app').hidden=false;$('#save').hidden=false;$('#logout').hidden=LOCAL;$('#creds-btn').hidden=LOCAL;}
+
+// ---------- Нэр/нууц үгээр нэвтрэх ----------
+// GitHub token нь нэр+нууц үгнээс гаргасан түлхүүрээр (PBKDF2 → AES-GCM) шифрлэгдэж auth.json-д хадгалагдана.
+// Зөв нэр, нууц үггүйгээр token-г задлах боломжгүй.
+const AUTH_PATH=REPO.site+'admin/auth.json';
+const ITER=600000;
+const b64=u=>btoa(String.fromCharCode(...u));
+const unb64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+async function deriveKey(user,pass,salt,iter,usage){
+  const base=await crypto.subtle.importKey('raw',new TextEncoder().encode(user.trim().toLowerCase()+'\n'+pass),'PBKDF2',false,['deriveKey']);
+  return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:iter,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,[usage]);
+}
+async function encryptToken(user,pass,tok){
+  const salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12));
+  const key=await deriveKey(user,pass,salt,ITER,'encrypt');
+  const ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv},key,new TextEncoder().encode(tok)));
+  return {v:1,kdf:'PBKDF2-SHA256',iter:ITER,salt:b64(salt),iv:b64(iv),data:b64(ct)};
+}
+async function decryptToken(auth,user,pass){
+  const key=await deriveKey(user,pass,unb64(auth.salt),auth.iter,'decrypt');
+  const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(auth.iv)},key,unb64(auth.data));
+  return new TextDecoder().decode(pt);
+}
+$('#pw-form').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const user=$('#username').value,pass=$('#password').value,btn=$('#pw-btn'),m=$('#login-msg');
+  if(!user.trim()||!pass)return;
+  btn.disabled=true;btn.textContent='Шалгаж байна…';m.textContent='';m.className='msg';
+  try{
+    const r=await fetch('auth.json?t='+Date.now(),{cache:'no-store'});
+    if(!r.ok){showLogin('Нэвтрэх нэр/нууц үг хараахан тохируулаагүй байна. Доорх GitHub token-оор нэвтэрч тохируулна уу.');$('#token-login').open=true;return;}
+    const auth=await r.json();
+    try{token=await decryptToken(auth,user,pass);}catch{showLogin('Нэвтрэх нэр эсвэл нууц үг буруу байна.');return;}
+    $('#password').value='';storeToken(token);start();
+  }catch(err){showLogin('Нэвтэрч чадсангүй: '+err.message);}
+  finally{btn.disabled=false;btn.textContent='Нэвтрэх';}
+});
+
+$('#creds-btn').addEventListener('click',()=>{$('#app').hidden=true;$('#creds').hidden=false;$('#creds-msg').textContent='';$('#new-user').focus();});
+$('#creds-cancel').addEventListener('click',()=>{$('#creds-form').reset();showApp();});
+$('#creds-form').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const user=$('#new-user').value.trim(),p1=$('#new-pass').value,p2=$('#new-pass2').value,m=$('#creds-msg'),btn=$('#creds-save');
+  m.className='msg err';
+  if(p1.length<12)return m.textContent='Нууц үг дор хаяж 12 тэмдэгт байна.';
+  if(p1!==p2)return m.textContent='Нууц үг таарахгүй байна.';
+  btn.disabled=true;btn.textContent='Хадгалж байна…';m.textContent='';
+  try{
+    const auth=await encryptToken(user,p1,token);
+    let fileSha;try{fileSha=(await contents(AUTH_PATH)).sha;}catch(err){if(err.status!==404)throw err;}
+    await contents(AUTH_PATH,{method:'PUT',body:JSON.stringify({message:'Admin: нэвтрэх нэр/нууц үг шинэчлэв',content:b64FromText(JSON.stringify(auth,null,2)+'\n'),sha:fileSha,branch:REPO.branch})});
+    $('#creds-form').reset();showApp();
+    toast('Хадгалагдлаа. 1–2 минутын дараа шинэ нэр, нууц үгээр нэвтэрч болно.');
+  }catch(err){m.textContent='Хадгалж чадсангүй: '+err.message;}
+  finally{btn.disabled=false;btn.textContent='Хадгалах';}
+});
 async function start(){
   try{LOCAL=(await fetch('/__admin/ping')).ok;}catch{}
-  if(LOCAL){await load();$('#login').hidden=true;$('#app').hidden=false;$('#save').hidden=false;$('.brand small').textContent='ADMIN · LOCAL';return;}
+  if(LOCAL){await load();showApp();$('.brand small').textContent='ADMIN · LOCAL';return;}
   if(!token)return showLogin();
   $('#status').textContent='Ачаалж байна…';
   try{
     const repo=await gh('');
     if(!repo.permissions||!repo.permissions.push){storeToken('');token='';return showLogin('Энэ token-д бичих эрх алга. Contents: Read and write эрх өгнө үү.');}
     await load();
-    $('#login').hidden=true;$('#app').hidden=false;$('#save').hidden=false;$('#logout').hidden=false;
+    showApp();
   }catch(e){
     if(e.status===401||e.status===403||e.status===404){storeToken('');token='';return showLogin('Token буруу эсвэл Chameleon repo-д хандах эрхгүй байна.');}
     showLogin('Ачаалж чадсангүй: '+e.message);
