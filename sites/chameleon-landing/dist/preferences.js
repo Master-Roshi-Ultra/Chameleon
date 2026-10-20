@@ -1,5 +1,6 @@
 // Keep original Mongolian text so toggling language never loses content.
 const translations={
+'REELS / БОГИНО ВИДЕО':'REELS / SHORT VIDEOS','Хөдөлгөөнтэй':'Stories','түүхүүд.':'in motion.','Бидний бүтээсэн Reel, богино видеонууд.':'Reels and short videos we have created.','Facebook, Instagram-аас шууд үзээрэй.':'Watch them straight from Facebook and Instagram.','Үзэх ↗':'Watch ↗',
 'Харилцагч байгууллагууд':'Our clients',
 'Бүтээлүүд':'Work','Үйлчилгээ':'Services','Үйл явц':'Process','Технологи':'Technology','Бидний тухай':'About','Үнэ':'Pricing','Төсөл эхлүүлэх':'Start a project',
 'БҮТЭЭЛЧ ДИЗАЙН & ДИЖИТАЛ ШИЙДЭЛ':'CREATIVE DESIGN & DIGITAL SOLUTIONS','Брэндийнхээ':'Let your brand','өнгийг':'show its','гарга.':'colors.','Санааг тань харагдах дизайн, танигдах контент, хэрэгтэй дижитал шийдэл болгоё.':'Turn your ideas into distinctive design, memorable content and useful digital solutions.','Төслөө ярилцъя':'Let’s talk','Бүтээлүүд үзэх':'Explore our work','Таны бизнес. Бидний бүтээлч шийдэл.':'Your business. Our creative solutions.','САНААНААС БҮТЭЭЛ РҮҮ':'FROM IDEA TO CREATION','Та бизнестээ төвлөр.':'Focus on your business.','Бүтээлч ажлыг':'Leave the creative work','бидэнд даатга.':'to us.','Өөрийн':'Your own','өнгөөр.':'colors.','ДИЗАЙН':'DESIGN','КОНТЕНТ':'CONTENT','ДИЖИТАЛ ШИЙДЭЛ':'DIGITAL SOLUTIONS',
