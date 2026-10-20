@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="mn">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Chameleon Admin</title>
+<link rel="icon" href="../assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400..800&display=swap">
+<style>
+:root{--navy:#0a203d;--teal:#00aeb0;--lime:#c0ed29;--bg:#f3f7f7;--card:#fff;--text:#0a203d;--muted:#687582;--line:#dce4e6;--danger:#d64545;--input:#fff}
+@media (prefers-color-scheme:dark){:root{--bg:#0d1624;--card:#17253a;--text:#e4edf6;--muted:#94a3b5;--line:#33435b;--input:#0f1b2b}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 Manrope,Arial,sans-serif}
+button,input,textarea{font:inherit;color:inherit}
+a{color:var(--teal)}
+[hidden]{display:none!important}
+.top{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:16px;padding:12px 24px;background:var(--navy);color:#fff}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.02em}
+.brand img{width:34px;height:34px;object-fit:contain}
+.brand small{font-weight:600;color:var(--lime);font-size:12px;letter-spacing:.08em}
+.top .spacer{flex:1}
+.top a{color:#fff;font-size:13px;font-weight:600}
+.status{font-size:13px;color:#b9c6d4}
+.status.dirty{color:var(--lime)}
+.btn{border:0;border-radius:100px;padding:10px 18px;font-weight:700;font-size:13px;cursor:pointer;background:var(--line);color:var(--navy)}
+.btn.primary{background:var(--lime);color:var(--navy)}
+.btn.teal{background:var(--teal);color:#fff}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}
+.btn.danger{background:transparent;color:var(--danger);border:1px solid currentColor}
+.btn:disabled{opacity:.5;cursor:default}
+.btn.sm{padding:6px 12px;font-size:12px}
+.icon-btn{border:1px solid var(--line);background:var(--card);border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:14px;flex:0 0 auto}
+.icon-btn:hover{border-color:var(--teal)}
+.icon-btn.del:hover{border-color:var(--danger);color:var(--danger)}
+main{max-width:1100px;margin:0 auto;padding:24px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px}
+.tabs button{border:1px solid var(--line);background:var(--card);border-radius:100px;padding:9px 16px;font-weight:700;font-size:13px;cursor:pointer}
+.tabs button[aria-selected=true]{background:var(--navy);color:#fff;border-color:var(--navy)}
+@media (prefers-color-scheme:dark){.tabs button[aria-selected=true]{background:var(--teal);border-color:var(--teal)}}
+.panel-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+.panel-head h2{margin:0;font-size:24px;letter-spacing:-.03em}
+.panel-head p{margin:4px 0 0;color:var(--muted);font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px}
+.card-head{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.card-head h3{margin:0;font-size:18px;flex:1;min-width:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:700;color:var(--muted)}
+input[type=text],input[type=number],input[type=url],input[type=password],textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:9px 11px;background:var(--input);font-weight:500;font-size:14px}
+input:focus,textarea:focus{outline:2px solid var(--teal);outline-offset:0;border-color:transparent}
+textarea{resize:vertical;min-height:76px}
+.check{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600}
+.check input{width:18px;height:18px;accent-color:var(--teal)}
+.rows{display:flex;flex-direction:column;gap:8px}
+.row{display:flex;align-items:center;gap:8px}
+.row input{min-width:0}
+.row .name{flex:2}.row .qty{flex:0 0 80px}.row .price{flex:1}
+.sub{margin-top:14px;padding-top:14px;border-top:1px dashed var(--line)}
+.sub-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:13px;font-weight:700}
+.hint{color:var(--muted);font-size:12px;font-weight:500}
+.sum{font-size:12px;color:var(--muted);margin-top:8px}
+.sum.warn{color:#c47a00}
+.client{display:grid;grid-template-columns:120px 1fr auto;gap:14px;align-items:center}
+.logo-box{width:120px;height:72px;border-radius:12px;border:1px solid var(--line);display:grid;place-items:center;padding:8px;background:#fff;overflow:hidden}
+.logo-box.dark{background:#070b11}
+.logo-box img{max-width:100%;max-height:100%;object-fit:contain}
+.client-fields{display:flex;flex-direction:column;gap:8px;min-width:0}
+.client-fields .line{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.file-btn{position:relative;overflow:hidden}
+.file-btn input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.tag{display:inline-block;padding:2px 9px;border-radius:30px;background:var(--lime);color:var(--navy);font-size:11px;font-weight:800}
+.reel{display:grid;grid-template-columns:150px 1fr auto;gap:14px;align-items:start}
+.reel-preview{width:150px;aspect-ratio:9/16;border-radius:12px;overflow:hidden;background:var(--navy);display:grid;place-items:center;color:#94a3b5;font-size:12px;text-align:center;padding:0}
+.reel-preview iframe{width:100%;height:100%;border:0}
+.reel .badge{font-size:12px;font-weight:700}
+.reel .badge.bad{color:var(--danger)}
+.reel .badge.ok{color:var(--teal)}
+.actions{display:flex;flex-direction:column;gap:6px}
+.empty{text-align:center;color:var(--muted);padding:30px;border:1px dashed var(--line);border-radius:16px}
+.login{max-width:520px;margin:60px auto}
+.login h1{font-size:28px;letter-spacing:-.04em;margin:0 0 6px}
+.login ol{padding-left:20px;color:var(--muted);font-size:13px}
+.login ol li{margin-bottom:4px}
+.msg{margin-top:12px;font-size:13px}
+.msg.err{color:var(--danger)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--navy);color:#fff;padding:12px 20px;border-radius:100px;font-size:14px;font-weight:600;box-shadow:0 10px 30px #0004;z-index:10}
+.toast.err{background:var(--danger)}
+@media (max-width:700px){
+  .top{flex-wrap:wrap;padding:10px 16px}.status{order:5;width:100%}
+  main{padding:16px}
+  .client{grid-template-columns:1fr}.reel{grid-template-columns:1fr}.reel-preview{width:120px}
+  .actions{flex-direction:row}
+  .row .qty{flex-basis:58px}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><img src="../assets/logo.png" alt=""><span>CHAMELEON</span><small>ADMIN</small></div>
+  <span class="status" id="status"></span>
+  <span class="spacer"></span>
+  <a href="../" target="_blank" rel="noopener">Сайтыг харах ↗</a>
+  <button class="btn primary" id="save" hidden disabled>Хадгалах</button>
+  <button class="btn ghost sm" id="logout" hidden style="color:#fff;border-color:#ffffff44">Гарах</button>
+</header>
+
+<main>
+  <section class="login card" id="login" hidden>
+    <h1>Admin нэвтрэх</h1>
+    <p class="hint">Өөрчлөлт GitHub дээрх сайтын файлд шууд хадгалагдаж, 1–2 минутын дараа сайт шинэчлэгдэнэ.</p>
+    <ol>
+      <li>GitHub → Settings → Developer settings → <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Fine-grained tokens</a> руу орно.</li>
+      <li><b>Repository access</b>: зөвхөн <b>Chameleon</b> repo-г сонгоно.</li>
+      <li><b>Permissions → Contents</b>: <b>Read and write</b> болгоно.</li>
+      <li>Үүссэн token-оо доор хуулна. Token зөвхөн энэ төхөөрөмжийн browser-т хадгалагдана.</li>
+    </ol>
+    <label class="f">GitHub token<input type="password" id="token" autocomplete="off" placeholder="github_pat_…"></label>
+    <div style="margin-top:12px;display:flex;gap:8px"><button class="btn teal" id="login-btn">Нэвтрэх</button></div>
+    <div class="msg" id="login-msg"></div>
+  </section>
+
+  <section id="app" hidden>
+    <div class="tabs" role="tablist">
+      <button role="tab" data-tab="packages" aria-selected="true">Үнийн багцууд</button>
+      <button role="tab" data-tab="singles" aria-selected="false">Нэгж үнэ</button>
+      <button role="tab" data-tab="clients" aria-selected="false">Харилцагчид</button>
+      <button role="tab" data-tab="reels" aria-selected="false">Reels</button>
+    </div>
+    <div id="panel"></div>
+  </section>
+</main>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+// GitHub дээрх сайтын агуулгын файлыг уншиж, засаж, буцааж хадгална.
+const REPO={owner:'Master-Roshi-Ultra',name:'Chameleon',branch:'main',site:'sites/chameleon-landing/dist/'};
+const CONTENT_PATH=REPO.site+'data/content.js';
+const PREFIX='window.CHAMELEON_CONTENT=';
+const $=s=>document.querySelector(s);
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+const money=n=>Number(n||0).toLocaleString('en-US');
+
+let LOCAL=false,token=readToken(),data=null,sha=null,header='',dirty=false,tab='packages';
+const pendingLogos=new Map(); // client object → {base64, ext, preview}
+
+function readToken(){try{return localStorage.getItem('chameleon-admin-token')||'';}catch{return '';}}
+function storeToken(t){try{t?localStorage.setItem('chameleon-admin-token',t):localStorage.removeItem('chameleon-admin-token');}catch{}}
+
+function toast(text,isErr){const t=$('#toast');t.textContent=text;t.classList.toggle('err',!!isErr);t.hidden=false;clearTimeout(t._h);t._h=setTimeout(()=>t.hidden=true,isErr?6000:3000);}
+function setDirty(v){dirty=v;$('#save').disabled=!v;$('#status').textContent=v?'● Хадгалаагүй өөрчлөлт байна':'Бүх өөрчлөлт хадгалагдсан';$('#status').classList.toggle('dirty',v);}
+addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue='';}});
+
+async function gh(path,opts={}){
+  const r=await fetch('https://api.github.com/repos/'+REPO.owner+'/'+REPO.name+path,{...opts,headers:{Accept:'application/vnd.github+json',Authorization:'Bearer '+token,'X-GitHub-Api-Version':'2022-11-28',...(opts.headers||{})}});
+  const body=await r.json().catch(()=>({}));
+  if(!r.ok){const e=new Error(body.message||('GitHub '+r.status));e.status=r.status;throw e;}
+  return body;
+}
+// Local сервер (tools/admin-server.py) дээр GitHub-ын оронд дискэнд хадгална.
+function contents(repoPath,opts){return LOCAL?localReq(repoPath,opts):gh('/contents/'+encodePath(repoPath)+(opts?'':'?ref='+REPO.branch),opts);}
+async function localReq(repoPath,opts={}){const r=await fetch('/__admin/contents/'+encodePath(repoPath),{...opts,headers:{'Content-Type':'application/json'}});const body=await r.json().catch(()=>({}));if(!r.ok){const e=new Error(body.message||('Local '+r.status));e.status=r.status;throw e;}return body;}
+const encodePath=p=>p.split('/').map(encodeURIComponent).join('/');
+function b64FromText(text){const bytes=new TextEncoder().encode(text);let bin='';for(let i=0;i<bytes.length;i+=0x8000)bin+=String.fromCharCode.apply(null,bytes.subarray(i,i+0x8000));return btoa(bin);}
+function textFromB64(b64){const bin=atob(b64.replace(/\s/g,''));return new TextDecoder().decode(Uint8Array.from(bin,c=>c.charCodeAt(0)));}
+
+async function load(){
+  const file=await contents(CONTENT_PATH);
+  const text=textFromB64(file.content);
+  const i=text.indexOf(PREFIX);
+  if(i<0)throw new Error('content.js файлын бүтэц танигдсангүй');
+  header=text.slice(0,i);
+  data=JSON.parse(text.slice(i+PREFIX.length).trim().replace(/;\s*$/,''));
+  for(const k of ['packages','singles','clients','reels'])data[k]=data[k]||[];
+  sha=file.sha;pendingLogos.clear();setDirty(false);render();
+}
+
+async function save(){
+  const btn=$('#save');btn.disabled=true;btn.textContent='Хадгалж байна…';
+  try{
+    // Шинэ логонуудыг эхлээд assets/clients руу байршуулна.
+    for(const [client,logo] of pendingLogos){
+      const base=(slug(client.name)||'client')+'-'+Date.now().toString(36);
+      const rel='assets/clients/'+base+'.'+logo.ext;
+      await contents(REPO.site+rel,{method:'PUT',body:JSON.stringify({message:'Admin: '+client.name+' лого нэмэв',content:logo.base64,branch:REPO.branch})});
+      client.logo=rel;pendingLogos.delete(client);
+    }
+    const problems=validate();
+    if(problems.length){toast(problems[0],true);return;}
+    const text=header+PREFIX+JSON.stringify(data,null,2)+';\n';
+    const res=await contents(CONTENT_PATH,{method:'PUT',body:JSON.stringify({message:'Admin: сайтын агуулга шинэчлэв',content:b64FromText(text),sha,branch:REPO.branch})});
+    sha=res.content.sha;setDirty(false);render();
+    toast(LOCAL?'Хадгалагдлаа (таны компьютер дээр). Сайтаа refresh хийж харна уу.':'Хадгалагдлаа. Сайт 1–2 минутын дараа шинэчлэгдэнэ.');
+  }catch(e){
+    if(e.status===409||e.status===422&&/sha/i.test(e.message))toast('Файлыг өөр газраас өөрчилсөн байна. Хуудсаа refresh хийгээд дахин засна уу.',true);
+    else toast('Хадгалж чадсангүй: '+e.message,true);
+    setDirty(true);
+  }finally{btn.textContent='Хадгалах';btn.disabled=!dirty;}
+}
+
+function validate(){
+  const p=[];
+  data.packages.forEach((x,i)=>{if(!x.name.trim())p.push((i+1)+'-р багцын нэр хоосон байна');});
+  data.singles.forEach((x,i)=>{if(!x.name.trim())p.push('Нэгж үнийн '+(i+1)+'-р мөрийн нэр хоосон байна');});
+  data.clients.forEach((x,i)=>{if(!x.logo)p.push((x.name||(i+1)+'-р харилцагч')+': лого оруулаагүй байна');});
+  data.reels.forEach((x,i)=>{if(!reelEmbed(x.url))p.push((i+1)+'-р Reel-ийн холбоос буруу байна');});
+  return p;
+}
+function slug(s){return String(s).toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,40);}
+
+// Нийтийн сайтын app.js-тэй ижил дүрмээр Reel холбоосыг embed болгоно.
+function reelEmbed(url){try{const u=new URL(url);const host=u.hostname.replace(/^(www|m|web)\./,'');
+  if(host==='instagram.com'){const m=u.pathname.match(/^\/(?:[^/]+\/)?(reel|reels|p|tv)\/([\w-]+)/);if(m)return{src:`https://www.instagram.com/${m[1]==='reels'?'reel':m[1]}/${m[2]}/embed/`,source:'Instagram'};}
+  if(host==='facebook.com'||host==='fb.watch')return{src:'https://www.facebook.com/plugins/video.php?show_text=false&href='+encodeURIComponent(url),source:'Facebook'};
+}catch{}return null;}
+
+// ---------- Дүрслэл ----------
+function render(){
+  document.querySelectorAll('[data-tab]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===tab)));
+  $('#panel').innerHTML={packages:renderPackages,singles:renderSingles,clients:renderClients,reels:renderReels}[tab]();
+}
+const moveBtns=(list,i)=>`<button class="icon-btn" data-act="up" data-list="${list}" data-i="${i}" title="Дээш" ${i===0?'disabled':''}>↑</button><button class="icon-btn" data-act="down" data-list="${list}" data-i="${i}" title="Доош" ${i===data[list].length-1?'disabled':''}>↓</button><button class="icon-btn del" data-act="del" data-list="${list}" data-i="${i}" title="Устгах">✕</button>`;
+const field=(label,path,value,type='text',extra='')=>`<label class="f">${label}<input type="${type}" data-path="${path}" value="${esc(value)}" ${extra}></label>`;
+
+const pkgTitle=p=>`${esc(p.name)||'Шинэ багц'} ${p.recommended?'<span class="tag">Санал болгох</span>':''}`;
+function pkgSum(p,i){const sum=(p.items||[]).reduce((a,x)=>a+Number(x.price||0),0),off=sum!==Number(p.price);return `Мөрүүдийн нийлбэр: ${money(sum)} ₮ ${off?`— багцын үнээс (${money(p.price)} ₮) өөр байна. <button class="btn sm ghost" data-act="use-sum" data-i="${i}">Нийлбэрийг үнэ болгох</button>`:'✓'}`;}
+const pkgSumOff=p=>(p.items||[]).reduce((a,x)=>a+Number(x.price||0),0)!==Number(p.price);
+function renderPackages(){
+  return `<div class="panel-head"><div><h2>Үнийн багцууд</h2><p>“Үнэ” хэсгийн багцууд. Нэр солиход хүсэлтийн маягт, footer автоматаар шинэчлэгдэнэ.</p></div><button class="btn teal" data-act="add-package">+ Багц нэмэх</button></div>`+
+  (data.packages.length?data.packages.map((p,i)=>`<div class="card">
+    <div class="card-head"><h3 data-title="${i}">${pkgTitle(p)}</h3>${moveBtns('packages',i)}</div>
+    <div class="grid">
+      ${field('Багцын нэр',`packages.${i}.name`,p.name)}
+      ${field('Нийт үнэ (₮)',`packages.${i}.price`,p.price,'number','min="0" step="1000"')}
+      ${field('Хэнд тохирох вэ?',`packages.${i}.fit`,p.fit)}
+      ${field('Хугацаа',`packages.${i}.time`,p.time)}
+      ${field('Засвар',`packages.${i}.revisions`,p.revisions)}
+      ${field('Богино тайлбар',`packages.${i}.description`,p.description)}
+    </div>
+    <div class="grid" style="margin-top:12px">
+      <label class="f">Товч агуулга <span class="hint">(мөр бүр картан дээр тусдаа мөр болно)</span><textarea data-path="packages.${i}.summary" data-lines>${esc((p.summary||[]).join('\n'))}</textarea></label>
+      <div style="display:flex;align-items:flex-end"><label class="check"><input type="checkbox" data-path="packages.${i}.recommended" ${p.recommended?'checked':''}> “Санал болгох” гэж онцлох</label></div>
+    </div>
+    <div class="sub"><div class="sub-head"><span>Багцад багтах ажил <span class="hint">— дэлгэрэнгүй цонхонд харагдана (үнэ = тухайн тооны нийт дүн)</span></span><button class="btn sm ghost" data-act="add-item" data-i="${i}">+ Мөр</button></div>
+      <div class="rows">${(p.items||[]).map((it,j)=>`<div class="row"><input class="name" type="text" placeholder="Ажил" data-path="packages.${i}.items.${j}.name" value="${esc(it.name)}"><input class="qty" type="number" min="1" title="Тоо" data-path="packages.${i}.items.${j}.qty" value="${esc(it.qty)}"><input class="price" type="number" min="0" step="1000" title="Үнэ" data-path="packages.${i}.items.${j}.price" value="${esc(it.price)}"><button class="icon-btn del" data-act="del-item" data-i="${i}" data-j="${j}" title="Устгах">✕</button></div>`).join('')}</div>
+      <div class="sum ${pkgSumOff(p)?'warn':''}" data-sum="${i}">${pkgSum(p,i)}</div>
+    </div>
+  </div>`).join(''):'<div class="empty">Багц алга. “+ Багц нэмэх” дарна уу.</div>');
+}
+
+function renderSingles(){
+  return `<div class="panel-head"><div><h2>Нэгж үнэ</h2><p>“Нэгж үнэ” таб болон Үйлчилгээ хэсгийн карт дээрх үнэ эндээс авна.</p></div><button class="btn teal" data-act="add-single">+ Мөр нэмэх</button></div>
+  <div class="card"><div class="rows">${data.singles.length?data.singles.map((s,i)=>`<div class="row"><input class="name" type="text" placeholder="Үйлчилгээ" data-path="singles.${i}.name" value="${esc(s.name)}"><input class="price" type="number" min="0" step="1000" data-path="singles.${i}.price" value="${esc(s.price)}"><span class="hint">₮</span>${moveBtns('singles',i)}</div>`).join(''):'<div class="empty">Мөр алга.</div>'}</div>
+  <p class="hint" style="margin-top:12px">Үйлчилгээний карт дээр харагддаг нэрс: Постер, Brandbook, Профайл, ковер, Reel, Boost хийх заавар, Chatbot, Вэб / танилцуулга, Аппликейшн. Нэрийг өөрчилбөл картаас тухайн мөр нуугдана.</p></div>`;
+}
+
+function renderClients(){
+  return `<div class="panel-head"><div><h2>Харилцагч байгууллагууд</h2><p>Гүйдэг логоны мөр. Тоо (“Бидэнд итгэсэн 13 байгууллага”) автоматаар шинэчлэгдэнэ.</p></div><button class="btn teal" data-act="add-client">+ Харилцагч нэмэх</button></div>`+
+  (data.clients.length?data.clients.map((c,i)=>{const pending=pendingLogos.get(c);const src=pending?pending.preview:(c.logo?'../'+c.logo:'');return `<div class="card client">
+    <div class="logo-box ${c.darkLogo?'dark':''}">${src?`<img src="${esc(src)}" alt="">`:'<span class="hint">Лого алга</span>'}</div>
+    <div class="client-fields">
+      ${field('Байгууллагын нэр',`clients.${i}.name`,c.name)}
+      <div class="line">
+        <span class="btn sm ghost file-btn">${src?'Лого солих':'Лого оруулах'}<input type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" data-logo="${i}"></span>
+        <label class="check"><input type="checkbox" data-path="clients.${i}.darkLogo" ${c.darkLogo?'checked':''}> Цагаан лого (бараан дэвсгэр)</label>
+        ${pending?'<span class="tag">Хадгалахад байршуулна</span>':''}
+      </div>
+    </div>
+    <div class="actions">${moveBtns('clients',i)}</div>
+  </div>`;}).join(''):'<div class="empty">Харилцагч алга.</div>');
+}
+
+const reelPreview=e=>e?`<iframe src="${esc(e.src)}" loading="lazy" scrolling="no" allowfullscreen></iframe>`:'Холбоос оруулбал<br>урьдчилж харна';
+const reelBadge=(r,e)=>r.url?(e?`<span class="badge ok">✓ ${e.source} Reel танигдлаа</span>`:'<span class="badge bad">Facebook эсвэл Instagram Reel-ийн холбоос биш байна</span>'):'';
+function renderReels(){
+  return `<div class="panel-head"><div><h2>Reels</h2><p>Facebook эсвэл Instagram-ын Reel холбоосыг хуулж тавина. Reel байхгүй үед сайт дээр энэ хэсэг нуугдана.</p></div><button class="btn teal" data-act="add-reel">+ Reel нэмэх</button></div>`+
+  (data.reels.length?data.reels.map((r,i)=>{const e=reelEmbed(r.url);return `<div class="card reel">
+    <div class="reel-preview" data-preview="${i}">${reelPreview(e)}</div>
+    <div class="client-fields">
+      ${field('Reel холбоос',`reels.${i}.url`,r.url,'url','placeholder="https://www.instagram.com/reel/… эсвэл https://www.facebook.com/reel/…"')}
+      <div data-badge="${i}">${reelBadge(r,e)}</div>
+      ${field('Гарчиг (заавал биш)',`reels.${i}.title`,r.title||'','text','placeholder="Жишээ: GymHub брэнд видео"')}
+      <p class="hint">Пост нь <b>Public</b> байх ёстой. Facebook: Reel → Share → Copy link. Instagram: Reel → ⋯ → Link.</p>
+    </div>
+    <div class="actions">${moveBtns('reels',i)}</div>
+  </div>`;}).join(''):'<div class="empty">Reel алга. “+ Reel нэмэх” дарж Facebook, Instagram-ын холбоос оруулна уу.</div>');
+}
+
+// ---------- Засварлах ----------
+function setPath(path,value){const keys=path.split('.');let o=data;for(const k of keys.slice(0,-1))o=o[k];o[keys.at(-1)]=value;}
+$('#panel').addEventListener('input',e=>{
+  const el=e.target;if(!el.dataset.path)return;
+  let v=el.type==='checkbox'?el.checked:el.type==='number'?(el.value===''?0:Number(el.value)):el.value;
+  if(el.hasAttribute('data-lines'))v=el.value.split('\n').map(s=>s.trim()).filter(Boolean);
+  setPath(el.dataset.path,v);setDirty(true);
+  if(el.type==='checkbox')return render();
+  // Бүх хуудсыг дахин зурахгүй, зөвхөн гарчиг, нийлбэрийг шинэчилнэ.
+  const m=el.dataset.path.match(/^packages\.(\d+)\./);
+  if(m){const i=+m[1],p=data.packages[i];$(`[data-title="${i}"]`).innerHTML=pkgTitle(p);const sum=$(`[data-sum="${i}"]`);sum.innerHTML=pkgSum(p,i);sum.classList.toggle('warn',pkgSumOff(p));}
+});
+$('#panel').addEventListener('change',e=>{
+  const el=e.target;
+  if(el.dataset.logo!==undefined)return pickLogo(el);
+  const m=(el.dataset.path||'').match(/^reels\.(\d+)\.url$/);
+  if(m){const i=+m[1],r=data.reels[i],e=reelEmbed(r.url);$(`[data-preview="${i}"]`).innerHTML=reelPreview(e);$(`[data-badge="${i}"]`).innerHTML=reelBadge(r,e);}
+});
+$('#panel').addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');if(!b)return;
+  const i=+b.dataset.i,list=b.dataset.list;
+  switch(b.dataset.act){
+    case 'up':[data[list][i-1],data[list][i]]=[data[list][i],data[list][i-1]];break;
+    case 'down':[data[list][i+1],data[list][i]]=[data[list][i],data[list][i+1]];break;
+    case 'del':{const item=data[list][i];if(!confirm('“'+(item.name||item.title||item.url||'Энэ мөр')+'”-г устгах уу?'))return;pendingLogos.delete(item);data[list].splice(i,1);break;}
+    case 'add-package':data.packages.push({name:'',price:0,recommended:false,description:'',fit:'',time:'',revisions:'',summary:[],items:[]});break;
+    case 'add-item':data.packages[i].items.push({name:'',qty:1,price:0});break;
+    case 'del-item':data.packages[i].items.splice(+b.dataset.j,1);break;
+    case 'use-sum':data.packages[i].price=data.packages[i].items.reduce((a,x)=>a+Number(x.price||0),0);break;
+    case 'add-single':data.singles.push({name:'',price:0});break;
+    case 'add-client':data.clients.push({name:'',logo:'',darkLogo:false});break;
+    case 'add-reel':data.reels.push({url:'',title:''});break;
+    default:return;
+  }
+  setDirty(true);render();
+  if(b.dataset.act.startsWith('add-')&&b.dataset.act!=='add-item'){const cards=$('#panel').querySelectorAll('.card');const last=cards[cards.length-1];if(last){last.scrollIntoView({block:'center'});last.querySelector('input')?.focus({preventScroll:true});}}
+});
+function pickLogo(input){
+  const file=input.files[0];if(!file)return;
+  if(file.size>1024*1024){toast('Лого 1MB-аас бага байх ёстой',true);input.value='';return;}
+  const ext={'image/png':'png','image/jpeg':'jpg','image/webp':'webp','image/svg+xml':'svg'}[file.type];
+  if(!ext){toast('PNG, JPG, WEBP эсвэл SVG файл сонгоно уу',true);return;}
+  const reader=new FileReader();
+  reader.onload=()=>{const url=reader.result;pendingLogos.set(data.clients[+input.dataset.logo],{base64:url.slice(url.indexOf(',')+1),ext,preview:url});setDirty(true);render();};
+  reader.readAsDataURL(file);
+}
+
+document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{tab=b.dataset.tab;render();}));
+$('#save').addEventListener('click',save);
+addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='s'&&data){e.preventDefault();if(dirty)save();}});
+
+// ---------- Нэвтрэх ----------
+function showLogin(msg){$('#login').hidden=false;$('#app').hidden=true;$('#save').hidden=true;$('#logout').hidden=true;$('#status').textContent='';const m=$('#login-msg');m.textContent=msg||'';m.className='msg'+(msg?' err':'');}
+async function start(){
+  try{LOCAL=(await fetch('/__admin/ping')).ok;}catch{}
+  if(LOCAL){await load();$('#login').hidden=true;$('#app').hidden=false;$('#save').hidden=false;$('.brand small').textContent='ADMIN · LOCAL';return;}
+  if(!token)return showLogin();
+  $('#status').textContent='Ачаалж байна…';
+  try{
+    const repo=await gh('');
+    if(!repo.permissions||!repo.permissions.push){storeToken('');token='';return showLogin('Энэ token-д бичих эрх алга. Contents: Read and write эрх өгнө үү.');}
+    await load();
+    $('#login').hidden=true;$('#app').hidden=false;$('#save').hidden=false;$('#logout').hidden=false;
+  }catch(e){
+    if(e.status===401||e.status===403||e.status===404){storeToken('');token='';return showLogin('Token буруу эсвэл Chameleon repo-д хандах эрхгүй байна.');}
+    showLogin('Ачаалж чадсангүй: '+e.message);
+  }
+}
+$('#login-btn').addEventListener('click',()=>{token=$('#token').value.trim();if(!token)return;storeToken(token);start();});
+$('#token').addEventListener('keydown',e=>{if(e.key==='Enter')$('#login-btn').click();});
+$('#logout').addEventListener('click',()=>{if(dirty&&!confirm('Хадгалаагүй өөрчлөлт устах болно. Гарах уу?'))return;storeToken('');token='';data=null;setDirty(false);$('#status').textContent='';showLogin();});
+start();
+</script>
+</body>
+</html>
